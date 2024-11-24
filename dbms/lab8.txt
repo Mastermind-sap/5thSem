@@ -1,0 +1,85 @@
+CREATE TABLE Students (
+    student_id INT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    date_of_birth DATE
+);
+
+DELIMITER //
+
+CREATE TRIGGER check_student_age
+BEFORE INSERT ON Students
+FOR EACH ROW
+BEGIN
+    IF NEW.date_of_birth > DATE_SUB(CURDATE(), INTERVAL 18 YEAR) THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'Student must be at least 18 years old';
+    END IF;
+END; //
+
+DELIMITER ;
+
+CREATE TABLE Courses (
+    course_id INT PRIMARY KEY,
+    course_name VARCHAR(100) NOT NULL,
+    credits INT CHECK (credits > 0)
+);
+
+CREATE TABLE Enrollments (
+    enrollment_id INT PRIMARY KEY,
+    student_id INT,
+    course_id INT,
+    enrollment_date DATE NOT NULL,
+    FOREIGN KEY (student_id) REFERENCES Students(student_id),
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id)
+);
+
+
+INSERT INTO Students VALUES 
+(1, 'Sap', 'Adhik', 'sap@gmail.com', '2000-05-15'),
+(2, 'Rahul', 'Sharma', 'sharma@scam.com', '2001-07-20'),
+(3, 'Sam', 'Kazi', 'sam@gmail.com', '1999-02-10'),
+(4, 'Ram', 'Dev', 'ram@g.com', '2002-08-25');
+
+
+INSERT INTO Courses VALUES
+(101, 'Mathematics', 3),
+(102, 'Physics', 4),
+(103, 'Chemistry', 3),
+(104, 'Computer Science', 5);
+
+
+INSERT INTO Enrollments VALUES
+(1, 1, 101, '2024-01-15'),
+(2, 2, 102, '2024-01-16'),
+(3, 3, 103, '2024-01-17'),
+(4, 4, 104, '2024-01-18');
+
+
+
+
+
+INSERT INTO Students VALUES (5, 'krish', 'Lee', 'krish@g.com', '2020-06-15');
+
+
+INSERT INTO Courses VALUES (105, 'History', -3);
+
+
+INSERT INTO Enrollments VALUES (5, 10, 101, '2024-01-20');
+
+
+SELECT s.first_name, s.last_name, c.course_name, e.enrollment_date
+FROM Students s
+JOIN Enrollments e ON s.student_id = e.student_id
+JOIN Courses c ON e.course_id = c.course_id;
+
+SELECT c.course_name, COUNT(e.enrollment_id) AS Enrollments
+FROM Courses c
+LEFT JOIN Enrollments e ON c.course_id = e.course_id
+GROUP BY c.course_name;
+
+SELECT s.first_name, s.last_name, s.email
+FROM Students s
+LEFT JOIN Enrollments e ON s.student_id = e.student_id
+WHERE e.enrollment_id IS NULL;

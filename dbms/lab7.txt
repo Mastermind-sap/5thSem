@@ -1,0 +1,33 @@
+SELECT DoctorName
+FROM Doctors D
+WHERE (SELECT SUM(Fee) FROM Appointments WHERE DoctorID = D.DoctorID) > 
+      (SELECT AVG(Fee) FROM Appointments);
+
+SELECT P.FirstName, P.LastName
+FROM Patients P
+WHERE P.DoctorID = (SELECT DoctorID FROM Doctors WHERE DoctorName = 'Dr. Smith');
+
+
+CREATE VIEW ActiveAppointments AS
+SELECT A.AppointmentID,
+       CONCAT(P.FirstName, ' ', P.LastName) AS PatientName, 
+       D.DoctorName, A.AppointmentDate, A.Fee
+FROM Appointments A
+JOIN Patients P ON A.PatientID = P.PatientID
+JOIN Doctors D ON A.DoctorID = D.DoctorID;
+
+
+SELECT *
+FROM ActiveAppointments
+WHERE AppointmentDate > '2023-09-02';
+
+
+SELECT P.FirstName, P.LastName, A.AppointmentDate
+FROM Patients P
+JOIN Appointments A ON P.PatientID = A.PatientID
+WHERE A.PatientID IN (
+    SELECT PatientID
+    FROM Appointments
+    GROUP BY PatientID, AppointmentDate
+    HAVING COUNT(*) > 1
+);
