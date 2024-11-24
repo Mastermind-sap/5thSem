@@ -1,0 +1,109 @@
+CREATE TABLE customer (
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(50),
+    city VARCHAR(50),
+    grade INT,
+    salesman_id INT
+);
+
+CREATE TABLE salesman (
+    salesman_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    city VARCHAR(50),
+    commission DECIMAL(10, 2)
+);
+
+CREATE TABLE orders (
+    order_no INT PRIMARY KEY,
+    purch_amount DECIMAL(10, 2),
+    order_date DATE,
+    customer_id INT,
+    salesman_id INT
+);
+
+
+
+
+INSERT INTO customer VALUES
+(1, 'Sam', 'Delhi', 100, 101);
+
+INSERT INTO salesman VALUES
+(101, 'Bob', 'Delhi', 0.10);
+
+INSERT INTO orders VALUES
+(1001, 250.00, '2023-09-01', 1, 101);
+
+
+
+
+SELECT 
+    c.customer_id, 
+    c.customer_name, 
+    c.city AS c_city, 
+    c.grade, 
+    s.name AS s_name, 
+    s.city AS s_city, 
+    o.order_no, 
+    o.purch_amount, 
+    o.order_date
+FROM 
+    customer c
+JOIN 
+    orders o ON c.customer_id = o.customer_id
+JOIN 
+    salesman s ON c.salesman_id = s.salesman_id;
+
+
+
+SELECT 
+    c.customer_name, 
+    c.city AS c_city, 
+    c.grade, 
+    s.name AS s_name, 
+    s.city AS s_city
+FROM 
+    customer c
+JOIN 
+    salesman s ON c.salesman_id = s.salesman_id
+ORDER BY 
+    c.customer_id ASC;
+
+
+
+SELECT 
+    c.customer_name, 
+    c.city AS c_city, 
+    c.grade, 
+    s.name AS s_name, 
+    s.city AS s_city
+FROM 
+    customer c
+JOIN 
+    salesman s ON c.salesman_id = s.salesman_id
+WHERE 
+    c.grade < 300
+ORDER BY 
+    c.customer_id ASC;
+
+
+SELECT 
+    s.name AS salesman_name, 
+    s.city AS salesman_city
+FROM 
+    salesman s
+LEFT JOIN 
+    customer c ON s.salesman_id = c.salesman_id
+ORDER BY 
+    s.name ASC;
+
+
+
+SELECT 
+    s.name AS salesman_name, 
+    s.city AS s_city, 
+    c.customer_name, 
+    c.city AS c_city
+FROM 
+    salesman s
+CROSS JOIN 
+    customer c;

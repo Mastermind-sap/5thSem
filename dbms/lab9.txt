@@ -1,0 +1,66 @@
+CREATE TABLE Books (
+    BookID INT PRIMARY KEY,
+    Title VARCHAR(100) NOT NULL,
+    Author VARCHAR(100) NOT NULL,
+    PublishedYear INT CHECK (PublishedYear >= 1800),
+    ISBN VARCHAR(20) UNIQUE
+);
+
+CREATE TABLE BorrowedBooks (
+    BorrowID INT PRIMARY KEY,
+    BookID INT,
+    MemberName VARCHAR(100) NOT NULL,
+    BorrowDate DATE NOT NULL,
+    ReturnDate DATE,
+    FOREIGN KEY (BookID) REFERENCES Books(BookID),
+    CHECK (ReturnDate >= BorrowDate OR ReturnDate IS NULL)
+);
+
+INSERT INTO Books VALUES
+(1, 'Maths', 'RD Sharma', 1995, 'ISBN001'),
+(2, 'Physics', 'H.C Verma', 2001, 'ISBN002'),
+(3, 'DBMS', 'Tripti', 2010, 'ISBN003'),
+(4, 'Operating Systems', 'Sam Brown', 2018, 'ISBN004');
+
+INSERT INTO BorrowedBooks VALUES
+(1, 1, 'Sahil', '2024-10-01', '2024-10-10'),
+(2, 2, 'Sam', '2024-10-05', NULL),
+(3, 3, 'Ram', '2024-10-12', '2024-10-15');
+
+
+SELECT B.BookID, B.Title, BB.MemberName
+FROM Books B
+INNER JOIN BorrowedBooks BB ON B.BookID = BB.BookID;
+
+
+SELECT BB.MemberName, BB.BorrowDate
+FROM BorrowedBooks BB
+WHERE BB.BookID IN (
+    SELECT BookID
+    FROM Books
+    WHERE PublishedYear > 2000
+)
+ORDER BY BB.BorrowDate DESC;
+
+
+SELECT BB.MemberName, COUNT(B.BookID) AS BorrowedCount
+FROM BorrowedBooks BB
+LEFT JOIN Books B ON BB.BookID = B.BookID
+GROUP BY BB.MemberName;
+
+
+SELECT B.BookID, B.Title
+FROM Books B
+LEFT JOIN BorrowedBooks BB ON B.BookID = BB.BookID
+WHERE BB.BookID IS NULL;
+
+
+SELECT BookID, Title, BorrowDate
+FROM (
+    SELECT B.BookID, B.Title, BB.BorrowDate
+    FROM Books B
+    INNER JOIN BorrowedBooks BB ON B.BookID = BB.BookID
+    ORDER BY BB.BorrowDate DESC
+    LIMIT 3
+) AS RecentBooks;
+

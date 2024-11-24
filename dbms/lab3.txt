@@ -1,0 +1,109 @@
+--- q1
+
+CREATE TABLE Employee (
+    Emp_no INT PRIMARY KEY,
+    E_name VARCHAR(50) NOT NULL,
+    Salary DECIMAL(10, 2),
+    Experience_years DECIMAL(3)
+);
+
+INSERT INTO Employee (Emp_no, E_name, Salary, Experience_years)
+VALUES (1, 'Saptarshi', 5000, 15),
+       (2, 'Sahil', 6000, 8),
+       (3, 'Harsh', 4500, 2);
+
+SELECT E_name, Salary, SQRT(Salary) AS Salary_Square_Root
+FROM Employee;
+
+SELECT E_name
+FROM Employee
+WHERE Experience_years > (SELECT AVG(Experience_years) FROM Employee);
+
+--- q2
+
+CREATE TABLE Sales (
+    Sale_id INT PRIMARY KEY,
+    Product_id INT NOT NULL,
+    Quantity_sold INT,
+    Sale_date DATE
+);
+
+INSERT INTO Sales (Sale_id, Product_id, Quantity_sold, Sale_date)
+VALUES (1, 101, 10, '2024-08-01'),
+       (2, 102, 20, '2024-08-02'),
+       (3, 103, 15, '2024-08-03'),
+       (4, 104, 25, '2024-08-04');
+
+SELECT SUM(Quantity_sold) AS Total_Quantity_Sold
+FROM Sales;
+
+SELECT AVG(Quantity_sold) AS Average_Quantity_Sold
+FROM Sales;
+
+--- q3
+
+CREATE TABLE EmployeeAttendance (
+    Emp_no INT PRIMARY KEY,
+    Attendance_date DATE,
+    Status VARCHAR(10)
+);
+
+INSERT INTO EmployeeAttendance (Emp_no, Attendance_date, Status)
+VALUES (1, '2024-08-01', 'Present'),
+       (2, '2024-01-02', 'Absent'),
+       (3, '2024-02-03', 'Present'),
+       (4, '2024-03-10', 'Present');
+
+SELECT *
+FROM EmployeeAttendance
+WHERE MONTH(Attendance_date) = MONTH(CURDATE())
+AND YEAR(Attendance_date) = YEAR(CURDATE());
+
+SELECT Attendance_date, DAYNAME(Attendance_date) AS Day_Of_Week
+FROM EmployeeAttendance;
+
+
+--- q4
+
+CREATE TABLE Customer (
+    Customer_id INT PRIMARY KEY,
+    C_name VARCHAR(50) NOT NULL,
+    City VARCHAR(50),
+    Email VARCHAR(100)
+);
+
+INSERT INTO Customer (Customer_id, C_name, City, Email)
+VALUES (1, 'Alison', 'Boston', 'ali@gmail.com'),
+       (2, 'Robert', 'Chicago', 'rob@mail.com'),
+       (3, 'Jon', 'Baltimore', 'jon@hotmail.com');
+
+SELECT UPPER(C_name) AS Upper_Case_Name
+FROM Customer;
+
+SELECT *
+FROM Customer
+WHERE City LIKE 'B%';
+
+
+--- q5
+
+CREATE TABLE ProductSales (
+    Sale_id INT PRIMARY KEY,
+    Product_id INT NOT NULL,
+    Sale_amount VARCHAR(50),
+    Sale_date DATE
+);
+
+INSERT INTO ProductSales (Sale_id, Product_id, Sale_amount, Sale_date)
+VALUES (1, 201, '100.50', '2024-08-01'),
+       (2, 202, '200.75', '2024-08-02'),
+       (3, 203, '300.25', '2024-08-03');
+
+SELECT SUM(CAST(Sale_amount AS DECIMAL(10, 2))) AS Total_Sales_Amount
+FROM ProductSales;
+
+SELECT DATE_FORMAT(Sale_date, '%d-%b-%Y') AS Formatted_Sale_Date
+FROM ProductSales;
+
+
+

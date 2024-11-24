@@ -1,0 +1,66 @@
+CREATE TABLE Patients (
+    PatientID INT PRIMARY KEY,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50),
+    Age INT,
+    Gender VARCHAR(10),
+    DoctorID INT
+);
+
+
+CREATE TABLE Doctors (
+    DoctorID INT PRIMARY KEY,
+    DoctorName VARCHAR(50),
+    Specialty VARCHAR(50)
+);
+
+
+CREATE TABLE Appointments (
+    AppointmentID INT PRIMARY KEY,
+    PatientID INT,
+    DoctorID INT,
+    AppointmentDate DATE,
+    Fee DECIMAL(10, 2),
+    FOREIGN KEY (PatientID) REFERENCES Patients(PatientID),
+    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID)
+);
+
+INSERT INTO Doctors VALUES 
+(1, 'Dr. Smith', 'Cardiology'),
+(2, 'Dr. Johnson', 'Neurology');
+
+INSERT INTO Patients VALUES 
+(1, 'John', 'Doe', 30, 'Male', 1),
+(2, 'Jane', 'Doe', 28, 'Female', 2);
+
+INSERT INTO Appointments VALUES 
+(1, 1, 1, '2023-09-01', 500.00),
+(2, 2, 2, '2023-09-02', 300.00),
+(3, 1, 1, '2023-09-03', 300.00);
+
+
+SELECT d.DoctorName, SUM(a.Fee) AS TotalFees
+FROM Doctors d
+JOIN Appointments a ON d.DoctorID = a.DoctorID
+GROUP BY d.DoctorID, d.DoctorName;
+
+SELECT d.DoctorName, SUM(a.Fee) AS TotalFees
+FROM Doctors d
+JOIN Appointments a ON d.DoctorID = a.DoctorID
+GROUP BY d.DoctorID, d.DoctorName
+HAVING SUM(a.Fee) > 750;
+
+SELECT a.AppointmentID, p.FirstName, p.LastName, d.DoctorName, a.AppointmentDate, a.Fee
+FROM Appointments a
+JOIN Patients p ON a.PatientID = p.PatientID
+JOIN Doctors d ON a.DoctorID = d.DoctorID
+ORDER BY a.AppointmentDate ASC, a.Fee DESC;
+
+CREATE INDEX idx_appointment_date
+ON Appointments(AppointmentDate);
+
+SELECT d.DoctorName, COUNT(a.PatientID) AS PatientCount
+FROM Doctors d
+JOIN Appointments a ON d.DoctorID = a.DoctorID
+GROUP BY d.DoctorID, d.DoctorName
+ORDER BY PatientCount DESC;

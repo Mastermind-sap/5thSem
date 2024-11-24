@@ -1,0 +1,59 @@
+CREATE TABLE Dept (
+    deptno INT PRIMARY KEY,
+    deptnm VARCHAR(100),
+    loc VARCHAR(100)
+);
+
+CREATE TABLE Emp (
+    empno INT PRIMARY KEY,
+    ename VARCHAR(100),
+    job VARCHAR(50),
+    mgrno INT,
+    hiredate DATE,
+    sal DECIMAL(10, 2),
+    comm DECIMAL(10, 2),
+    deptno INT,
+    FOREIGN KEY (deptno) REFERENCES dept(deptno)
+);
+
+INSERT INTO Dept VALUES
+(10, 'Sales', 'New York'),
+(20, 'HR', 'Los Angeles'),
+(30, 'IT', 'San Francisco');
+
+
+INSERT INTO Emp VALUES
+(1, 'Saptarshi', 'Developer', NULL, '2016-04-15', 14000.00, 2000.00, 30),
+(2, 'Krishnam', 'HR', 1, '2018-03-21', 4000.00, 1500.00, 10),
+(3, 'Harsh', 'Clerk', NULL, '2017-07-11', 3000.00, NULL, 20);
+
+
+
+SELECT empno, ename, 
+       (sal + 1000) * 1.05 AS net_salary 
+FROM Emp;
+
+
+SELECT * 
+FROM Emp 
+WHERE (deptno = 10 OR deptno = 20) 
+  AND job != 'Clerk';
+
+
+SELECT * 
+FROM Emp 
+WHERE sal > 5000 
+  AND sal < 15000;
+
+
+SELECT * 
+FROM Emp 
+WHERE job LIKE 'M%' 
+  AND hiredate BETWEEN '2015-01-01' AND '2020-12-31';
+
+
+SELECT deptno 
+FROM Emp 
+UNION 
+SELECT deptno 
+FROM Dept;
